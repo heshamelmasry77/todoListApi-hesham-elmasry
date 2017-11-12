@@ -4,10 +4,28 @@ var express = require('express'),
   mongoose = require('mongoose'),
   Task = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser');
-
-// mongoose instance connection url connection
+//
+// // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb');
+// mongoose.connect('mongodb://localhost/Tododb');
+//
+
+if (process.env.hasOwnProperty('MONGODB_URI')) {
+  var db_string = process.env.MONGODB_URI;
+} else {
+  db_string = 'mongodb://localhost:27017/Tododb';
+  mongoose.set('debug', true);
+}
+
+mongoose.connect(db_string, {
+    useMongoClient: true},
+  function(err) {
+    if (!err) {
+      console.log('we are connected to mongodb server');
+    } else {
+      console.log('can\'t connect to mongodb server' + err);
+    }
+  });
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
